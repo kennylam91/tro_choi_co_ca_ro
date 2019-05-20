@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>game cờ ca rô</title>
+</head>
+<style>
+    .cell {
+        border: 1px solid black;
+        position: absolute;
+        display: inline-block;
+        text-align: center;
+        line-height: 30px;
+        margin: 0px;
+
+    }
+    .unselectable {
+        background-color: #ddd;
+        cursor: not-allowed;
+    }
+
+    .winning {
+        background-color: red;
+        color: white;
+    }
+</style>
+<body>
+
+</body>
+<script>
+    let Cell = function (length, x, y) {
+        this.length = length;
+        this.x = x;
+        this.y = y;
+        this.xIndex = x / this.length;
+        this.yIndex = y / this.length;
+        this.HTML= '<div class="cell"' +
+            'id="id'+'-'+this.xIndex+'-'+this.yIndex+'"'+
+            ' style="width:' + this.length + 'px;'+
+            ' height:' + this.length + 'px;'+
+            ' left:' + this.y + 'px;'+
+            ' top:' + this.x + 'px;"'+
+            'onclick="cellClicked(this)"'+
+            '>'+ '</div>';
+        this.show = function () {
+            document.write(this.HTML);
+        };
+    };
+    let arr = [];
+    let tableWidth = 12;
+    let tableHeight = 12;
+    arrInit(arr);
+    let length = 30;
+    let x = 0;
+    let y = 0;
+    let value = "";
+    let count=0;
+
+    function arrInit(arr) {
+        for (i = 0; i < tableWidth; i++) {
+            arr[i] = [];
+            for (j = 0; j < tableHeight; j++) {
+                arr[i][j] = null;
+            }
+        }
+    }
+
+    function tableShow() {
+        let length = 30;
+        let value = "";
+        for (i = 0, x = 0; i < tableHeight; i++, x += length) {
+            for (j = 0, y = 0; j < tableWidth; j++, y += length) {
+                let cell = new Cell(length, x, y, value);
+                cell.show();
+
+
+            }
+        }
+    }
+    function cellClicked(cell){
+        console.log(cell);
+        result=showXorO();
+        cell.innerHTML=result;
+        count++;
+        inputToArr(cell,result);
+
+    }
+    function showXorO(){
+        if(count%2) return "O";
+        else return "X";
+    }
+    function inputToArr(cell,result){
+        idsplit=cell.id.split("-");
+        document.getElementById(cell.id).classList.add("unselectable");//CSS class cho ô đã được chọn
+        document.getElementById(cell.id).removeAttribute("onclick"); // Cố định giá trị của ô, không cho phép ấn
+
+        arr[idsplit[1]][idsplit[2]]=result;
+        checkResult(arr);
+    }
+    function checkResult(arr) {
+        for (i = 4; i < tableWidth; i++) {
+            for (j = 0; j < tableHeight; j++) {
+                if (check5value(arr[i][j], arr[i - 1][j], arr[i - 2][j], arr[i - 3][j], arr[i - 4][j])) {
+                    console.log(i + "," + j);
+                    // document.getElementById(i + "," + j).classList.add("winning");
+                    showWinning(i, j);
+                    showWinning(i - 1, j);
+                    showWinning(i - 2, j);
+                    showWinning(i - 3, j);
+                    showWinning(i - 4, j);
+                    alert(arr[i][j] + " đã thắng!!!");
+                    for (t = 0; t < tableWidth*tableHeight; t++) {
+                        document.getElementsByClassName("cell")[t].removeAttribute("onclick");
+                    }
+                    break;
+                }
+            }
+        }
+        for (i = 0; i < tableWidth; i++) {
+            for (j = 4; j < tableHeight; j++) {
+                if (check5value(arr[i][j], arr[i][j - 1], arr[i][j - 2], arr[i][j - 3], arr[i][j - 4])) {
+                    document.getElementById(i + "," + (j - 1)).classList.add("winning");
+                    showWinning(i, j);
+                    showWinning(i, j - 2);
+                    showWinning(i, j - 3);
+                    showWinning(i, j - 4);
+                    alert(arr[i][j] + " đã thắng!!!");
+                    for (t = 0; t < tableWidth*tableHeight; t++) {
+                        document.getElementsByClassName("cell")[t].removeAttribute("onclick");
+                    }
+
+                    break;
+                }
+            }
+        }
+        for (i = 4; i < tableWidth; i++) {
+            for (j = 4; j < tableHeight; j++) {
+                if (check5value(arr[i][j], arr[i - 1][j - 1], arr[i - 2][j - 2], arr[i - 3][j - 3], arr[i - 4][j - 4])) {
+                    showWinning(i, j);
+                    showWinning(i - 1, j - 1);
+                    showWinning(i - 2, j - 2);
+                    showWinning(i - 3, j - 3);
+                    showWinning(i - 4, j - 4);
+                    alert(arr[i][j] + " đã thắng!!!");
+                    for (t = 0; t < tableWidth*tableHeight; t++) {
+                        document.getElementsByClassName("cell")[t].removeAttribute("onclick");
+                    }
+
+                    break;
+                }
+            }
+        }
+        for (i = 4; i < tableWidth; i++) {
+            for (j = 0; j < tableHeight; j++) {
+                if (check5value(arr[i][j], arr[i - 1][j + 1], arr[i - 2][j + 2], arr[i - 3][j + 3], arr[i - 4][j + 4])) {
+                    showWinning(i, j);
+                    showWinning(i - 1, j + 1);
+                    showWinning(i - 2, j + 2);
+                    showWinning(i - 3, j + 3);
+                    showWinning(i - 4, j + 4);
+                    alert(arr[i][j] + " đã thắng!!!");
+                    for (t = 0; t < tableWidth*tableHeight; t++) {
+                        document.getElementsByClassName("cell")[t].removeAttribute("onclick");
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    function check5value(x0, x1, x2, x3, x4) { // Hàm này kiểm tra 5 số đầu vào có giá trị bằng nhau hay không
+        if ((x0) && (x0 === x1) && (x0 === x2) && (x0 === x3) && (x0 === x4)) return 1;
+        else return 0;
+    }
+    function showWinning(id1, id2) {
+        return (document.getElementById("id-"+id1+"-"+id2).classList.add("winning"));
+    }
+    tableShow();
+
+
+</script>
+</html>
